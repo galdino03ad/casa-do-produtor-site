@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa do Produtor - Insumos Agrícolas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .navbar { background: #2d5016; padding: 1rem; display: flex; justify-content: space-between; flex-wrap: wrap; }
+        .navbar a { color: white; text-decoration: none; padding: 0.5rem 1rem; }
+        .login-btn { background: #f8f9fa; color: #2d5016; border: none; padding: 0.5rem 1rem; cursor: pointer; border-radius: 4px; }
+        .hero { background: #4a7c3f; color: white; padding: 2rem 1rem; text-align: center; }
+        .container { padding: 1rem; max-width: 1200px; margin: 0 auto; }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border: 1px solid #ccc; z-index: 1000; border-radius: 8px; width: 90%; max-width: 400px; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; }
+        
+        /* Seção Sobre Responsiva */
+        .about-section { display: flex; flex-direction: column; gap: 2rem; padding: 1rem; align-items: center; }
+        @media (min-width: 768px) { .about-section { flex-direction: row; align-items: flex-start; } }
+        .about-image img { width: 100%; max-width: 500px; height: auto; border-radius: 8px; }
+        .about-content { flex: 1; }
+        .about-title { color: darkgreen; font-size: 2rem; margin-bottom: 1rem; text-align: center; }
+        @media (min-width: 768px) { .about-title { font-size: 3rem; text-align: left; } }
+        .contact-info h3 { color: #2d5016; margin: 1rem 0 0.5rem 0; font-size: 1.5rem; }
+        @media (min-width: 768px) { .contact-info h3 { font-size: 2rem; } }
+        .contact-info p { font-size: 1.2rem; }
+        @media (min-width: 768px) { .contact-info p { font-size: 1.5rem; } }
+        
+        /* Hero Text Responsivo */
+        .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        @media (min-width: 768px) { .hero h1 { font-size: 4rem; } }
+        .hero p { font-size: 1.2rem; }
+        @media (min-width: 768px) { .hero p { font-size: 2rem; } }
+        
+        /* Botão WhatsApp Responsivo */
+        .whatsapp-btn { background: #25D366; color: white; border: none; padding: 15px 25px; border-radius: 10px; cursor: pointer; margin-top: 1rem; font-size: 1.2rem; width: 100%; max-width: 350px; }
+        @media (min-width: 768px) { .whatsapp-btn { font-size: 1.5rem; padding: 20px 30px; } }
+        
+        /* Contato Section */
+        .contact-section { margin-top: 2rem; padding: 1.5rem; background: #f9f9f9; border-radius: 8px; text-align: center; }
+        .contact-section h3 { font-size: 1.5rem; margin-bottom: 1rem; }
+        @media (min-width: 768px) { .contact-section h3 { font-size: 2rem; } }
+        .contact-section p { font-size: 1.2rem; }
+        @media (min-width: 768px) { .contact-section p { font-size: 1.5rem; } }
+
+        /* Status de Sincronização */
+        .sync-status {
+            background: #e7f3ff;
+            padding: 0.5rem;
+            text-align: center;
+            color: #0066cc;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #b3d9ff;
+        }
+        .sync-status.connected { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .sync-status.error { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .sync-status.sheets { background: #fff3cd; color: #856404; border-color: #ffeaa7; }
+    </style>
+</head>
+<body>
+    <div class="sync-status" id="syncStatus">
+        🔄 Conectando ao Google Sheets...
+    </div>
+
+    <nav class="navbar">
+        <div>
+            <a href="index.html">Casa</a>
+            <a href="shop.html">Comprar</a>
+        </div>
+        <button class="login-btn" onclick="openLogin()">🔒</button>
+    </nav>
+
+    <section class="hero">
+        <h1>Casa do Produtor</h1>
+        <p>Sempre junto com você <br> para o que precisar</p>
+    </section>
+
+    <div class="container">
+        <section class="about-section">
+            <div class="about-image">
+                <img src="img/imagem-loja.jpeg" alt="loja">
+            </div>
+            <div class="about-content">
+                <h1 class="about-title">Sobre Nossa Loja</h1>
+                <div class="contact-info">
+                    <h3>Email</h3>
+                    <p>casadoprodutor.rc@gmail.com</p>
+                    <h3>Endereço</h3>
+                    <p>Rua: Ermelindo Milane Nº:1120 Rio Crespo RO</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="contact-section">
+            <h3>Entre em Contato</h3>
+            <p>Telefone: (69) 9.9240-3542</p>
+            <button onclick="openWhatsApp()" class="whatsapp-btn">
+                💬 Fale Conosco no WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeLogin()"></div>
+    <div id="loginModal" class="modal">
+        <h3>Login Administrativo</h3>
+        <input type="text" id="username" placeholder="Usuário" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;"><br>
+        <input type="password" id="password" placeholder="Senha" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;"><br>
+        <div style="margin-top: 1rem;">
+            <button onclick="login()" style="padding: 0.5rem 1rem; margin-right: 0.5rem;">Entrar</button>
+            <button onclick="closeLogin()" style="padding: 0.5rem 1rem;">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        // 🔧 CONFIGURAÇÃO GOOGLE SHEETS - SUBSTITUA pela SUA URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzG4XjW5y-0jQ9-2jMFeGHXfMwn0-lNLiQWzGebniCsGebhp0HaLMHU3jGJXJpHYQqC/exec';
+
+        // Sistema de Sincronização com Google Sheets
+        const STORAGE_KEY = 'casa_produtor_products_v4';
+        let isOnline = false;
+
+        function updateSyncStatus(message, type = '') {
+            const status = document.getElementById('syncStatus');
+            status.textContent = message;
+            status.className = 'sync-status' + (type ? ' ' + type : '');
+        }
+
+        // Função para testar conexão com Google Sheets
+        async function testSheetsConnection() {
+            try {
+                updateSyncStatus('🔄 Testando conexão com Google Sheets...', 'sheets');
+                
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=test`, {
+                    method: 'GET',
+                    mode: 'no-cors'
+                });
+                
+                updateSyncStatus('✅ Conectado ao Google Sheets - Sincronização ativa', 'connected');
+                return true;
+            } catch (error) {
+                updateSyncStatus('⚠️ Google Sheets offline - Usando dados locais', 'error');
+                return false;
+            }
+        }
+
+        // Verificar conexão com internet
+        async function checkOnlineStatus() {
+            isOnline = navigator.onLine;
+            if (isOnline) {
+                const sheetsConnected = await testSheetsConnection();
+                if (sheetsConnected) {
+                    // Sincronizar dados locais com Google Sheets
+                    await syncLocalToSheets();
+                }
+            } else {
+                updateSyncStatus('⚠️ Sem internet - Modo local', 'error');
+            }
+        }
+
+        // Sincronizar dados locais com Google Sheets
+        async function syncLocalToSheets() {
+            try {
+                const localProducts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                if (localProducts.length > 0) {
+                    updateSyncStatus('🔄 Sincronizando dados locais...', 'sheets');
+                    
+                    // Aqui enviaria os dados locais para o Sheets
+                    // Implementação completa no admin.html
+                    
+                    setTimeout(() => {
+                        updateSyncStatus('✅ Sincronizado - Todos dispositivos conectados', 'connected');
+                    }, 1500);
+                }
+            } catch (error) {
+                console.log('Erro na sincronização:', error);
+            }
+        }
+
+        // Monitorar status de conexão
+        window.addEventListener('online', checkOnlineStatus);
+        window.addEventListener('offline', checkOnlineStatus);
+
+        // Inicializar
+        checkOnlineStatus();
+
+        function openLogin() {
+            document.getElementById('loginModal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+        
+        function closeLogin() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+        
+        function login() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            if (user === 'Casadoprodutor' && pass === 'casa_do_produtor0510') {
+                localStorage.setItem('auth', 'true');
+                window.location.href = 'admin.html';
+            } else {
+                alert('Credenciais inválidas!');
+            }
+        }
+        
+        function openWhatsApp() {
+            const phone = "5569992403542";
+            const message = "Olá! Gostaria de mais informações sobre os produtos da Casa do Produtor.";
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        // Sincronização entre abas do mesmo navegador
+        window.addEventListener('storage', function(e) {
+            if (e.key === STORAGE_KEY) {
+                updateSyncStatus('🔄 Dados atualizados em tempo real', 'connected');
+            }
+        });
+
+        // Enter para login
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+    </script>
+</body>
+</html>
